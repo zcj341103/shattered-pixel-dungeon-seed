@@ -18,4 +18,9 @@ If you'd like to work with the code, you can find the following guides in `/docs
 - [Compiling for desktop platforms.](docs/getting-started-desktop.md)
 - [Compiling for iOS.](docs/getting-started-ios.md)
 - [Recommended changes for making your own mod.](docs/recommended-changes.md)# shattered-pixel-dungeon-seed
+
+破碎的像素地牢原码基本没有改动，在标题场景添加【选择种子】按钮，跳转到新场景SeedScene，可随机种子、挑选种子、选择种子查看前4层物品。
+
+参考借鉴了(https://github.com/alessiomarotta/shpd-seed-finder)
+
 # shattered-pixel-dungeon-seed
