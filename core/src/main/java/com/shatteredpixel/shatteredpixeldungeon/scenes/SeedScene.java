@@ -145,7 +145,7 @@ public class SeedScene extends PixelScene {
 		StyledButton introButton = new StyledButton(Chrome.Type.GREY_BUTTON_TR,"介绍"){
 			@Override
 			public void onClick() {
-				zw.text("1、随机种子按钮：随机一个种子的前4层物品信息。不包括怪物掉落的物品。\n2、输入框：输入可查范围内xx之戒|法杖|神器,每个物品中用\" \"空格隔开。回车确定，再点随机种子按钮查看。不支持查等级。最大查次数400次。\n3、点我设查的种子：可输入查看的种子。");
+				zw.text("1、随机种子按钮：随机一个种子的前4层物品信息。不包括怪物掉落的物品。\n2、输入框：输入可查范围内xx之戒|法杖|神器,每个物品中用\" \"空格隔开。回车确定，再点随机种子按钮查看。不支持查等级。最大查次数400次。\n3、点我设查的种子：可输入查看的种子。\n4、设置先挑战，查找的都是挑战种子。");
 			}			
 		};
 		introButton.setRect(75, 5, 35, 20);

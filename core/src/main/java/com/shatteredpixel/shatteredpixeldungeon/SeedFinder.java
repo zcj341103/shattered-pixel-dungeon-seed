@@ -132,11 +132,11 @@ public class SeedFinder {
 		GamesInProgress.selectedClass = HeroClass.WARRIOR; //默认英雄战士
 		Dungeon.init(); //初始化地牢
 		storage_seed = Dungeon.seed;
+		Dungeon.challenges = SPDSettings.challenges();//读取并设置挑战
 
 		//默认查看4层查看物品数据
 		for (int i = 0; i < floors; i++) {
 			Level l = Dungeon.newLevel();
-			record.append("[第"+(i+1)+"层]\n");
 			LevelInfo(l,record);
 			Dungeon.depth++;
 		}
@@ -165,20 +165,25 @@ public class SeedFinder {
 		ArrayList<Item> rings = new ArrayList<>(); //戒指
 		ArrayList<Item> artifacts = new ArrayList<>(); //神器
 		ArrayList<Item> wands = new ArrayList<>(); //法杖
+		int i = 0;//记录是否需要显示该层信息
+
 		for (Heap h : heaps) {
 			for (Item item : h.items) {
 				item.identify();
 				if (h.type == Type.FOR_SALE) continue;
-				else if (item instanceof MeleeWeapon || item instanceof Armor) equipment.add(item);//武器或护甲
-				else if (item instanceof Ring) rings.add(item);//戒指
-				else if (item instanceof Artifact) artifacts.add(item);//神器
-				else if (item instanceof Wand) wands.add(item);//法杖
+				else if (item instanceof MeleeWeapon || item instanceof Armor){i++;equipment.add(item);}//武器或护甲
+				else if (item instanceof Ring) {i++;rings.add(item);}//戒指
+				else if (item instanceof Artifact) {i++;artifacts.add(item);}//神器
+				else if (item instanceof Wand) {i++;wands.add(item);}//法杖
 			}
 		}
-		addRecord("装备",equipment,record);
-		addRecord("戒指",rings,record);
-		addRecord("神器",artifacts,record);
-		addRecord("法杖",wands,record);
+		if(i>0){
+			record.append("[第"+Dungeon.depth+"层]\n");
+			addRecord("装备",equipment,record);
+			addRecord("戒指",rings,record);
+			addRecord("神器",artifacts,record);
+			addRecord("法杖",wands,record);
+		}
 	}
 	private int FindSeek(ArrayList<String> seek, ArrayList<Item> items){
 		int size = 0;
@@ -200,6 +205,8 @@ public class SeedFinder {
 		GamesInProgress.selectedClass = HeroClass.WARRIOR; //默认英雄战士
 		Dungeon.init(); //初始化地牢
 		storage_seed = Dungeon.seed;
+		Dungeon.challenges = SPDSettings.challenges();//读取并设置挑战
+
 		//要的数据 武器 护甲 戒指 神器 法杖
 		ArrayList<Item> rings = new ArrayList<>(); //戒指
 		ArrayList<Item> artifacts = new ArrayList<>(); //神器
