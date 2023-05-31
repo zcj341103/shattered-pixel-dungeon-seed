@@ -11,8 +11,8 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 668,
-      "versionName": "1.4.3.seed-INDEV",
+      "versionCode": 684,
+      "versionName": "2.0.0.seed-INDEV",
       "outputFile": "android-debug.apk"
     }
   ],

@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle:7.4.0'
     }
 }
 
@@ -14,20 +14,20 @@ allprojects {
         appName = 'SPD随机种子'
         appPackageName = 'com.shatteredpixel.shatteredpixeldungeon'
 
-        appVersionCode = 668
-        appVersionName = '1.4.3.seed'
+        appVersionCode = 684
+        appVersionName = '2.0.0.seed'
 
         appJavaCompatibility = JavaVersion.VERSION_1_8
 
-        appAndroidCompileSDK = 31
+        appAndroidCompileSDK = 33
         appAndroidMinSDK = 14
-        appAndroidTargetSDK = 31
+        appAndroidTargetSDK = 33
 
         gdxVersion = '1.11.0'
         gdxControllersVersion = '2.2.3-SNAPSHOT'
-        robovmVersion = '2.3.16'
+        robovmVersion = '2.3.18'
     }
-    version = '1.4.3.seed'
+    version = appVersionName
 
     repositories {
         google()

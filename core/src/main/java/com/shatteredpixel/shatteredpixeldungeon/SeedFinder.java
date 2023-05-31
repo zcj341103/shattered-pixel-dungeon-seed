@@ -115,37 +115,46 @@ public class SeedFinder {
 	private long storage_seed;
 
 	public String[] addDungeon(int floors, String seed, ArrayList<String> seek){
-		StringBuilder record = new StringBuilder();
-		String[] data = new String[2];
+		// StringBuilder record = new StringBuilder();
+		int x = 1;
+		int max = 400;
+		ArrayList<String> all = new ArrayList<>();
 		if(seek.size()>0){
-			int x = 0;
-			int max = 400;
 			while (x<max){
 				if(FindLevel(seek)) break;
 				x++;
-			}
-			record.append("查找次数"+(x)+"\n");		
+			}	
 			SPDSettings.customSeed(DungeonSeed.convertToCode(storage_seed)); //设置地牢种子	
-		}else
+		}else{
 			SPDSettings.customSeed(seed); //设置地牢种子
-		
+		}
+
 		GamesInProgress.selectedClass = HeroClass.WARRIOR; //默认英雄战士
 		Dungeon.init(); //初始化地牢
 		storage_seed = Dungeon.seed;
 		Dungeon.challenges = SPDSettings.challenges();//读取并设置挑战
 
-		//默认查看4层查看物品数据
+		all.add(DungeonSeed.convertToCode(storage_seed));
+		all.add("查找次数"+(x)+"\n");
+
+		String montage = "";
+		
 		for (int i = 0; i < floors; i++) {
 			Level l = Dungeon.newLevel();
-			LevelInfo(l,record);
+			// all.add(LevelInfo(l));
+			montage += LevelInfo(l);
+			if((i+1)%5==0){
+				all.add(montage);
+				montage = "";
+			}
 			Dungeon.depth++;
 		}
-		record.append("\n");
 		//查看任务奖励
-		QuestInfo(record);
+		all.add(QuestInfo());
 		
-		data[0] = record.toString();
-		data[1] = DungeonSeed.convertToCode(storage_seed);// 转字符串
+		String[] data = new String[all.size()];
+		all.toArray(data);
+
 		return data;
 	}
 
@@ -158,7 +167,8 @@ public class SeedFinder {
 			record.append("\n");
 		}
 	}
-	private void LevelInfo(Level l, StringBuilder record){
+	private String LevelInfo(Level l){
+		StringBuilder record = new StringBuilder();
 		//要的数据 武器 护甲 戒指 神器 法杖
 		ArrayList<Heap> heaps = new ArrayList<>(l.heaps.valueList()); //散布的物品
 		ArrayList<Item> equipment = new ArrayList<>(); //装备 武器 护甲
@@ -184,6 +194,8 @@ public class SeedFinder {
 			addRecord("神器",artifacts,record);
 			addRecord("法杖",wands,record);
 		}
+
+		return record.toString();
 	}
 	private int FindSeek(ArrayList<String> seek, ArrayList<Item> items){
 		int size = 0;
@@ -238,7 +250,8 @@ public class SeedFinder {
 		return false;
 	}
 
-	private void QuestInfo(StringBuilder record){
+	private String QuestInfo(){
+		StringBuilder record = new StringBuilder();
 		ArrayList<Item> ghost = new ArrayList<>();
 		ArrayList<Item> wandmaker = new ArrayList<>();
 		ArrayList<Item> imp = new ArrayList<>();
@@ -261,6 +274,7 @@ public class SeedFinder {
 			Imp.Quest.complete();
 			addRecord("小鬼任务奖励",imp,record);
 		}
+		return record.toString();
 	}
 	public ArrayList<String> getData(String sj){
 		return ItemData.split(sj);

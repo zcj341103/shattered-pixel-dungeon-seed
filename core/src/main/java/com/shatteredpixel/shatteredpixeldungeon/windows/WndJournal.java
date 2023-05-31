@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2022 Evan Debenham
+ * Copyright (C) 2014-2023 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,7 +161,7 @@ public class WndJournal extends WndTabbed {
 		catalogTab.layout();
 		loreTab.layout();
 	}
-	//地牢指南
+	
 	public static class GuideTab extends Component {
 
 		private ScrollingListPane list;
@@ -212,7 +212,7 @@ public class WndJournal extends WndTabbed {
 		}
 
 	}
-	//炼金
+	
 	public static class AlchemyTab extends Component {
 		
 		private RedButton[] pageButtons;
@@ -389,7 +389,7 @@ public class WndJournal extends WndTabbed {
 			list.scrollTo(0, 0);
 		}
 	}
-	//地牢笔记
+	
 	private static class NotesTab extends Component {
 		
 		private ScrollingListPane list;
@@ -441,10 +441,10 @@ public class WndJournal extends WndTabbed {
 		}
 		
 	}
-	// 物品目录
+	
 	private static class CatalogTab extends Component{
 		
-		private RedButton[] itemButtons; //项目按钮
+		private RedButton[] itemButtons;
 		private static final int NUM_BUTTONS = 7;
 		
 		private static int currentItemIdx   = 0;
@@ -462,7 +462,6 @@ public class WndJournal extends WndTabbed {
 
 		private ScrollingListPane list;
 		
-		//创建子项
 		@Override
 		protected void createChildren() {
 			itemButtons = new RedButton[NUM_BUTTONS];
@@ -506,19 +505,19 @@ public class WndJournal extends WndTabbed {
 			
 			for (int i = 0; i < NUM_BUTTONS; i++){
 				if (i == currentItemIdx){
-					itemButtons[i].icon().color(TITLE_COLOR); //当前项目标题颜色
+					itemButtons[i].icon().color(TITLE_COLOR);
 				} else {
-					itemButtons[i].icon().resetColor(); //重置颜色
+					itemButtons[i].icon().resetColor();
 				}
 			}
 			
-			list.scrollTo( 0, 0 );//滚动到
+			list.scrollTo( 0, 0 );
 			
-			ArrayList<Class<? extends Item>> itemClasses; //项目类别
-			final HashMap<Class<?  extends Item>, Boolean> known = new HashMap<>();//哈希
+			ArrayList<Class<? extends Item>> itemClasses;
+			final HashMap<Class<?  extends Item>, Boolean> known = new HashMap<>();
 			if (currentItemIdx == WEAPON_IDX) {
-				itemClasses = new ArrayList<>(Catalog.WEAPONS.items()); //获取武器项目
-				for (Class<? extends Item> cls : itemClasses) known.put(cls, true); // 添加到哈希表中
+				itemClasses = new ArrayList<>(Catalog.WEAPONS.items());
+				for (Class<? extends Item> cls : itemClasses) known.put(cls, true);
 			} else if (currentItemIdx == ARMOR_IDX){
 				itemClasses = new ArrayList<>(Catalog.ARMOR.items());
 				for (Class<? extends Item> cls : itemClasses) known.put(cls, true);
@@ -540,14 +539,13 @@ public class WndJournal extends WndTabbed {
 			} else {
 				itemClasses = new ArrayList<>();
 			}
-
-			//Collections.sort 根据指定的Comparator产生的顺序对List集合元素进行排序
+			
 			Collections.sort(itemClasses, new Comparator<Class<? extends Item>>() {
 				@Override
 				public int compare(Class<? extends Item> a, Class<? extends Item> b) {
 					int result = 0;
+					
 					//specifically known items appear first, then seen items, then unknown items.
-					//具体已知的项目首先出现，然后是看到的项目，然后是未知的项目。
 					if (known.get(a) && Catalog.isSeen(a)) result -= 2;
 					if (known.get(b) && Catalog.isSeen(b)) result += 2;
 					if (Catalog.isSeen(a))                 result --;
@@ -561,16 +559,15 @@ public class WndJournal extends WndTabbed {
 				Item item = Reflection.newInstance(itemClass);
 				boolean itemIDed = known.get(itemClass);
 				boolean itemSeen = Catalog.isSeen(itemClass);
-				if ( itemSeen && !itemIDed ){ // 戒指 药水 卷轴 已认识但游戏中还需要识别 未识别
+				if ( itemSeen && !itemIDed ){
 					if (item instanceof Ring){
-						((Ring) item).anonymize(); //匿名化
+						((Ring) item).anonymize();
 					} else if (item instanceof Potion){
 						((Potion) item).anonymize();
 					} else if (item instanceof Scroll){
 						((Scroll) item).anonymize();
 					}
 				}
-				//滚动列表窗格
 				ScrollingListPane.ListItem listItem = new ScrollingListPane.ListItem(
 						(itemIDed && itemSeen) ? new ItemSprite(item) : new ItemSprite( ItemSpriteSheet.SOMETHING + spriteIndexes[currentItemIdx]),
 						null,
@@ -580,7 +577,6 @@ public class WndJournal extends WndTabbed {
 					public boolean onClick(float x, float y) {
 						if (inside( x, y ) && itemSeen) {
 							if (item instanceof ClassArmor){
-								//显示标题信息
 								GameScene.show(new WndTitledMessage(new Image(icon),
 										Messages.titleCase(item.trueName()), item.desc()));
 							} else {
@@ -609,7 +605,7 @@ public class WndJournal extends WndTabbed {
 		}
 		
 	}
-	//知识
+
 	public static class LoreTab extends Component{
 
 		private ScrollingListPane list;

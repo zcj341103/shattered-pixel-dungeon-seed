@@ -47,19 +47,37 @@ import com.watabou.input.PointerEvent;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Group;
+import com.watabou.noosa.Gizmo;
 import com.watabou.noosa.Image;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.TextInput;
+import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.PointerArea;
 import com.watabou.noosa.ui.Component;
 import com.watabou.utils.DeviceCompat;
 
+import java.util.ArrayList;
+
+
 public class SeedScene extends PixelScene {
-	private String seed_ = "";
+	private String seed_ = SPDSettings.customSeed();;
 	private String input = "";
 	private SeedFinder sf = new SeedFinder();
 
 	private StyledButton seedButton;
 	private RenderedTextBlock zw;
+	private Results body;
+
+	private int[] colors= {
+		0xFFFFFF,
+		0xFFFFFF,
+		0x00FF00,
+		0x00AAFF,
+		0xAA00FF,
+		0xFFAA00,
+		0xFFFFFF,
+		0xFFFFFF,
+	};
 
 	@Override
 	public void create() {
@@ -82,22 +100,36 @@ public class SeedScene extends PixelScene {
 		//容器
 		Component content = list.content();
 		content.clear();
-		content.setSize( fullWidth, 10 );
 
-		//显示文本内容
+		// Component body = new Component();
+		// content.add(body);
+		//显示版本
+		BitmapText version = new BitmapText( "v" + Game.version, pixelFont);
+		version.measure();
+		version.hardlight( 0x888888 );
+		version.x = w - version.width() - 4;
+		version.y = h - version.height() - 2;
+		add( version );
+
+		//显示介绍文本内容
 		zw = PixelScene.renderTextBlock("", 8);
 		zw.setPos(0, 75);
-		zw.maxWidth(130);
+		if (landscape()) {
+			// zw.maxWidth(300);
+		}else {
+			zw.maxWidth(130);
+		}
+		
 		content.add(zw);
 
 		//显示且设置种子按钮
-		seedButton = new StyledButton(Chrome.Type.BLANK, "点我设查的种子", 10){
+		seedButton = new StyledButton(Chrome.Type.BLANK, (seed_ == null || seed_.equals("")) ? "点我设查的种子":seed_, 10){
 			@Override
 			protected void onClick() {
-				String existingSeedtext = SPDSettings.customSeed();// 获取全局设置的种子
+				String seedtext = SPDSettings.customSeed();// 获取全局设置的种子
 				ShatteredPixelDungeon.scene().addToFront( new WndTextInput("设置查看种子界面",
 						"输入查看种子，会自动转换为对应的字符串。\n点[查看种子]就可查看。",
-						seed_,//要改为自定义的种子
+						seed_.equals("") ? seedtext:seed_,//要改为自定义的种子
 						20,
 						false,
 						"查看种子",
@@ -106,11 +138,11 @@ public class SeedScene extends PixelScene {
 					public void onSelect(boolean positive, String text) {
 						text = DungeonSeed.formatText(text);
 						long seed = DungeonSeed.convertFromText(text);
-
+						zw.text(" ");
 						if (positive && seed != -1){
 							seed_ = text;
 							input = "";
-							onFind();
+							onFind(content,fullWidth,landscape());
 						} else {
 							seed_ = "";
 						}
@@ -118,25 +150,26 @@ public class SeedScene extends PixelScene {
 				});
 			}
 		};
-		seedButton.setRect(15, 50, 100, 20);
-		content.add(seedButton);
+		seedButton.setRect(15, 45, 100, 20);
+		add(seedButton);
 
 		//输入查看对象
 		TextInput textBox = new TextInput(Chrome.get(Chrome.Type.TOAST_WHITE), false, (int)PixelScene.uiCamera.zoom * 9){
-			@Override
-			public void enterPressed() {
-				input = getText();
-			}
+			 @Override
+			 public void enterPressed() {
+			 	input = getText();
+			 }
 		}; // 类型， 多行  字体大小
 		textBox.setRect(5, 25, 100, 20);
-		content.add(textBox);
+		add(textBox);
 		
 		//随机种子按钮
 		StyledButton randomseedButton = new StyledButton(Chrome.Type.GREY_BUTTON_TR,"随机种子"){
 			@Override
 			public void onClick() {
 				seed_ = "";
-				onFind();
+				zw.text(" ");
+				onFind(content,fullWidth,landscape());
 			}			
 		};
 		randomseedButton.setRect(5, 5, 50, 20);
@@ -145,13 +178,19 @@ public class SeedScene extends PixelScene {
 		StyledButton introButton = new StyledButton(Chrome.Type.GREY_BUTTON_TR,"介绍"){
 			@Override
 			public void onClick() {
-				zw.text("1、随机种子按钮：随机一个种子的前4层物品信息。不包括怪物掉落的物品。\n2、输入框：输入可查范围内xx之戒|法杖|神器,每个物品中用\" \"空格隔开。回车确定，再点随机种子按钮查看。不支持查等级。最大查次数400次。\n3、点我设查的种子：可输入查看的种子。\n4、设置先挑战，查找的都是挑战种子。");
+				if (body==null)
+					body = new Results();
+				else{
+					body.clear();
+				}
+				zw.text("1、随机种子按钮：随机一个种子的前4层物品信息。不包括怪物掉落的物品。\n2、输入框：输入可查范围内xx之戒|法杖|神器,每个物品中用\" \"空格隔开。回车确定，再点随机种子按钮查看。不支持查等级。最大查次数400次。\n3、点我设查的种子：可输入查看的种子。\n4、设置先挑战，查找的都是挑战种子。\n5、注意死亡继承物品因素会导致种子内容变化。");
+				// zw.align(RenderedTextBlock.CENTER_ALIGN);
 			}			
 		};
 		introButton.setRect(75, 5, 35, 20);
 		add(introButton);
 
-		list.setRect( 0, 0, w, h );
+		list.setRect( 0, 65, w, h );
 		list.scrollTo(0, 0);
 
 		//退出按钮
@@ -165,11 +204,60 @@ public class SeedScene extends PixelScene {
 		ShatteredPixelDungeon.switchScene(SeedScene.class);
 	}
  
-	protected void onFind(){
-		String[] data = sf.addDungeon(4, seed_, sf.getData(input));
-		zw.text(data[0]);
-		seedButton.text(data[1]);
-		seed_=data[1];//设置种子		
+	protected void onFind(Component content, float fullWidth, boolean landscape){
+		// String[] data = landscape()? sf.addDungeon(19, seed_, sf.getData(input)):sf.addDungeon(9, seed_, sf.getData(input));
+		String[] data = sf.addDungeon(25, seed_, sf.getData(input));
+		seedButton.text(data[0]);
+		seed_ = data[0];//设置种子		
+		float topY = 0;
+
+		//清理之前的内容
+		if (body==null)
+			body = new Results();
+		else{
+			body.clear();
+		}
+
+		for (int i = 1; i < data.length; i++) {
+			if(data[i] != null && !data[i].equals("")){
+				RenderedTextBlock nr = PixelScene.renderTextBlock(data[i],8);
+				nr.setPos( 0, topY);
+				nr.hardlight(colors[i-1]);
+				nr.maxWidth(landscape?300:130);
+				body.add(nr);
+				topY += nr.height();
+			}
+		}
+		content.add(body);
+
+		content.setSize( fullWidth, topY + 65 );
+	}
+	//重新一下清理方法和添加方法
+	private class Results extends Group{
+		public Results() {
+			super();
+		}
+		@Override
+		public synchronized Gizmo add(Gizmo g) {
+			if (g.parent != null) {
+				g.parent.remove( g );
+			}
+			super.members.add( g );
+			g.parent = this;
+			super.length++;
+			return g;
+		}
+		@Override
+		public synchronized void clear() {
+			for (int i=0; i < length; i++) {
+				Gizmo g = super.members.get( i );
+				if (g != null) {
+					g.destroy();
+				}
+			}
+			super.members.clear();
+			super.length = 0;
+		}	
 	}
 
 }
