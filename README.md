@@ -1,4 +1,4 @@
-# Shattered Pixel Dungeon
+# 破碎的像素地牢种子查询
 
 [Shattered Pixel Dungeon](https://shatteredpixel.com/shatteredpd/) is an open-source traditional roguelike dungeon crawler with randomized levels and enemies, and hundreds of items to collect and use. Its based on the [source code of Pixel Dungeon](https://github.com/00-Evan/pixel-dungeon-gradle), by [Watabou](https://www.watabou.ru).
 
@@ -22,3 +22,6 @@ If you'd like to work with the code, you can find the following guides in `/docs
 - [Compiling for desktop platforms.](docs/getting-started-desktop.md)
 - [Compiling for iOS.](docs/getting-started-ios.md)
 - [Recommended changes for making your own version.](docs/recommended-changes.md)
+
+
+更新版本为破碎的像素地牢2.0版本，只要没有新物品更新的版本都是可有效的查询结果。在游戏菜单界面最下方添加查询按钮，点击便可进入查询。
