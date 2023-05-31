@@ -25,3 +25,7 @@ If you'd like to work with the code, you can find the following guides in `/docs
 
 
 更新版本为破碎的像素地牢2.0版本，只要没有新物品更新的版本都是可有效的查询结果。在游戏菜单界面最下方添加查询按钮，点击便可进入查询。
+
+借鉴了Shattered Pixel Dungeon seed finder 项目
+原项目地址
+https://github.com/Elektrochecker/shpd-seed-finder
